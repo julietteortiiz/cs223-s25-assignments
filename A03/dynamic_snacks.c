@@ -37,6 +37,9 @@ int main() {
     printf("%d)%s     cost:$%f    quantity:%d\n", i, snackBar[i].name, snackBar[i].price, snackBar[i].quantity);
   }
 
+  free(snackBar);
+  snackBar = NULL;
+
 
 
   return 0;

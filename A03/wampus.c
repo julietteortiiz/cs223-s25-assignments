@@ -1,41 +1,62 @@
 /*----------------------------------------------
- * Author: 
- * Date: 
- * Description
+ * Author: Juliette Ortiz
+ * Date: February 8, 2025
+ * Takes user input and creates matrix with manhattan distance from W
+ *
+ * Used Stack overflow for int to char conversion
+ * https://stackoverflow.com/questions/2279379/how-to-convert-integer-to-char-in-c
  ---------------------------------------------*/
 #include <stdio.h>
 #include <stdlib.h>
 
-struct snack {
-  char name[64];
-  float price;
-  int quantity;
-};
 
 int main() {
-  struct snack *snackBar;
-  int numberOfSnacks;
+  int rows; 
+  int columns;
+  int wampusI; //W row index`
+  int wampusJ; //W column index
+  char *matrix; //matrix pointer
 
-  printf("Enter number of snacks: ");
-  scanf("%d", &numberOfSnacks);
+  //user input
+  printf("Number is rows: ");
+  scanf("%d", &rows);
+  printf("Number of columns: ");
+  scanf("%d", &columns);
 
-  snackBar = malloc(sizeof(struct snack) * numberOfSnacks);
-  
-  for(int i = 0; i < numberOfSnacks; i++){
-    printf("Enter a name: \n");
-    scanf("%s", snackBar[i].name);
-    printf("Enter a cost: \n");
-    scanf("%f", &snackBar[i].price);
-    printf("Enter a quantity: \n");
-    scanf("%d", &snackBar[i].quantity);
+  //randomly generated indices for W
+  wampusI = rand() % rows;
+  wampusJ = rand() % columns;
+
+  //dynamic memory allocation
+  matrix = malloc(sizeof(char) * rows * columns);
+  if (matrix == NULL){
+    printf("error\n");
+    exit(1);
   }
 
-  printf("Welcome to Dynamic Donna's Snack Bar. \n \n");
-  for (int i = 0; i < numberOfSnacks; i++){
-    printf("%d)%s     cost:$%f    quantity:%d\n", i, snackBar[i].name, snackBar[i].price, snackBar[i].quantity);
+  //initializing matrix with manhattan distance values
+  for (int i = 0; i < rows; i++){
+    for (int j = 0; j < columns; j++){
+      int distance = abs(i-wampusI) + abs(j-wampusJ);
+      char dist = distance + '0';
+      matrix[i*columns + j] = dist;
+    }
   }
 
+  //placing W in proper index
+  matrix[wampusI*columns + wampusJ] = 'W';
 
+  //printing matrix
+  for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < columns; j++) {
+            printf("%c ", matrix[i * columns + j]);
+        }
+        printf("\n");
+    }
+
+    //free memory
+    free(matrix);
+    matrix = NULL;
 
   return 0;
 }
