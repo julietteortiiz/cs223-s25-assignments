@@ -117,7 +117,7 @@ void printRight(struct tree_node *root, int indent){
 }
 
 /*Print method pre-order traversal*/
-void print(struct tree_node *root, int indent)
+void printFinal(struct tree_node *root, int indent)
 {
   if (root == NULL)
   {
@@ -131,6 +131,10 @@ void print(struct tree_node *root, int indent)
     printRight(root->right, indent++);
   }
 
+}
+
+void print(struct tree_node *root){
+  printFinal(root, 1);
 }
 
 

@@ -43,7 +43,7 @@ int main (int argc, char* argv[])
   check(item != NULL, "test 9: item in tree");
   check(strncmp(item->data.name, "X", 1) == 0, "test 10: found correct object");
 
-  print(root, 1);
+  print(root);
   printSorted(root);
   clear(root);
   return 0;

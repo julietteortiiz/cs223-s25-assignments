@@ -16,7 +16,7 @@ struct tree_node
 extern struct tree_node* find(const char* name, struct tree_node* root);
 extern struct tree_node* insert(const char* name, struct tree_node* root);
 extern void clear(struct tree_node* root);
-extern void print(struct tree_node* root, int indent);
+extern void print(struct tree_node* root);
 extern void printSorted(struct tree_node* root);
 
 #endif
