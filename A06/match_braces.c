@@ -1,3 +1,8 @@
+// Author: Juliette Ortiz
+// Date: March 1st, 2025
+// Description: Program reads a file and prints out location of matching and unmatched braces
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

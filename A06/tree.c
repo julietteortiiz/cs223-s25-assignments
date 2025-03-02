@@ -1,7 +1,17 @@
+/*
+* Author: Juliette Ortiz
+* Date: March 1st, 2025
+* Description: Program implements a recursive binary tree.
+*
+*
+*/
+
+
 #include "tree.h"
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+
 
 /*find function recursively searches through tree by comparing name to data
 stored at each node*/
