@@ -73,47 +73,60 @@ struct tree_node *insert(const char *name, struct tree_node *root)
 /*CLear method recursively clears left subtree then right subtree*/
 void clear(struct tree_node *root)
 {
-  if (root == NULL){
+  if (root == NULL)
+  {
     return;
-  } else {
-    clear(root->left); //recursive call on left
-    clear(root->right); //recursive call on right
-    free(root); //free current
+  }
+  else
+  {
+    clear(root->left);  // recursive call on left
+    clear(root->right); // recursive call on right
+    free(root);         // free current
   }
 }
 
 /*Declarations to avoid bug issues*/
 void printLeft(struct tree_node *root, int indent);
-void printRight(struct tree_node*root, int indent);
+void printRight(struct tree_node *root, int indent);
 
 /*Prints left tree nodes*/
-void printLeft(struct tree_node *root, int indent){
-  if (root == NULL){
+void printLeft(struct tree_node *root, int indent)
+{
+  if (root == NULL)
+  {
     return;
-  } else {
-    for (int i = 0; i < indent; i++){
+  }
+  else
+  {
+    for (int i = 0; i < indent; i++)
+    {
       printf(" ");
     }
     printf("l:%s\n", root->data.name);
 
     printLeft(root->left, indent++);
     printRight(root->right, indent++);
-  }  
+  }
 }
 
 /*Prints right tree nodes*/
-void printRight(struct tree_node *root, int indent){
-  if (root == NULL){
+void printRight(struct tree_node *root, int indent)
+{
+  if (root == NULL)
+  {
     return;
-  } else {
-    for (int i = 0; i < indent; i++){
+  }
+  else
+  {
+    for (int i = 0; i < indent; i++)
+    {
       printf(" ");
     }
     printf("r:%s\n", root->data.name);
 
     printLeft(root->left, indent++);
     printRight(root->right, indent++);
-  }  
+  }
 }
 
 /*Print method pre-order traversal*/
@@ -126,19 +139,16 @@ void printFinal(struct tree_node *root, int indent)
   else
   {
     printf("%s\n", root->data.name);
-    
-    printLeft(root->left, indent++); 
+
+    printLeft(root->left, indent++);
     printRight(root->right, indent++);
   }
-
 }
 
-void print(struct tree_node *root){
+void print(struct tree_node *root)
+{
   printFinal(root, 1);
 }
-
-
-
 
 /*PrintSorted method is a recursive in-order BST traversal*/
 void printSorted(struct tree_node *root)

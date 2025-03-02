@@ -2,164 +2,188 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct bracket* stack = NULL;
-struct matchingBrackets* matchedBracketsList = NULL;
-struct bracket {
-  char type[8]; //Will be defined as Open or Close
+/*node pointer for easier variable declaration*/
+typedef struct node *node_ptr;
+
+/*node that holds the information for each bracket*/
+struct node
+{
+  char type[2];
   int row;
   int column;
-  struct bracket* next;
+  node_ptr match;
+  node_ptr next;
 };
-struct matchingBrackets{
-  struct bracket* open;
-  struct bracket* close;
-  struct matchingBrackets* next;
-};
-void push(struct bracket* bracket){
-  if (stack == NULL){
-    stack = bracket;
-  } else {
-    struct bracket* current = stack;
-    while(current->next != NULL){
-      current = current->next;
-    }
-    current->next = bracket;
-  }
-};
-struct bracket* pop(){
-  struct bracket* current = stack;
 
-  if (stack == NULL){
-    printf("Error: stack is empty. Cannot be popped\n");
+/* this list keeps track of the matched and unmatched brackets*/
+void insertList(char type[2], int row, int column, node_ptr match, node_ptr *head)
+{
+  node_ptr tmp_cell = malloc(sizeof(struct node));
+  if (tmp_cell == NULL)
+  {
+    printf("Error in insertList\n");
     exit(1);
-  } if (stack->next == NULL){
-    current = stack;
-    stack = NULL;
-    return current;
-  } else {
-    struct bracket* prev;
-    while(current->next != NULL){
-      prev = current;
-      current = current->next;
-    }
-    prev->next = NULL;
-    return current;
   }
-};
+  /*copy information into new bracket node*/
+  strcpy(tmp_cell->type, type);
+  tmp_cell->row = row;
+  tmp_cell->column = column;
+  tmp_cell->match = match;
 
-void printStack(){
-  if (stack == NULL){
-    printf("Stack is empty\n");
-  }
-  struct bracket* current = stack;
-  while (current != NULL){
-    printf("%s at (%d,%d)\n", current->type, current->row, current->column);
-    current = current->next;
-  }
-};
+  /*inserts new bracket node at front of list and sets it to be the new head*/
+  tmp_cell->next = *head;
+  *head = tmp_cell;
+}
 
-void printList(){
-  if (matchedBracketsList == NULL){
-    printf("Matched bracket list is empty\n");
+/*iterates through list and frees all the nodes*/
+void delete_list(node_ptr list)
+{
+  node_ptr temp;
+  while (list != NULL)
+  {
+    temp = list;
+    list = list->next;
+    free(temp);
   }
-  struct matchingBrackets* current = matchedBracketsList;
-  while ( current != NULL){
-    if(current->open == NULL || current->close == NULL){
+}
 
-    }
-    current = current->next;
+/* variable fro keeping track of stack*/
+typedef node_ptr STACK;
+
+/*checks if stack is empy by checking stack head node and next in list*/
+int is_empty(STACK S)
+{
+  return (S == NULL || S->next == NULL);
+}
+
+/*creates an empty stack*/
+STACK create_stack(void)
+{
+  STACK S = (STACK)malloc(sizeof(struct node));
+  if (S == NULL)
+  {
+    printf("Error in create_stack\n");
+    exit(1);
   }
-};
-
-void insert(struct bracket* newBracket){
-  if (matchedBracketsList == NULL){
-    matchedBracketsList = newBracket;
-  } else {
-    struct matchingBrackets* current = matchedBracketsList;
-    while(current->next != NULL){
-      current = current->next;
-    }
-    current->next = newBracket;
+  S->next = NULL;
+  return S;
+}
+/*creates new bracket node and pushes onto top of stack*/
+void push(char type[2], int row, int column, STACK S)
+{
+  node_ptr tmp_cell = (node_ptr)malloc(sizeof(struct node));
+  if (tmp_cell == NULL)
+  {
+    printf("Error in push\n");
+    exit(1);
   }
-};
+  strcpy(tmp_cell->type, type);
+  tmp_cell->row = row;
+  tmp_cell->column = column;
+  tmp_cell->next = S->next;
+  S->next = tmp_cell;
+}
 
-int main(int argc, char *fileName[]){
-  int row = 0; //keeps track of row as file is iterated through
-  int column = 0; //keeps track of column as line is iterated through
-  
-  FILE* filePointer = fopen(fileName[1], "r");
-  if(filePointer == NULL){
-    printf("Error: unable to open file %s\n", fileName[1]);
+/*pops and returns bracket node from top of stack*/
+node_ptr pop(STACK S)
+{
+  if (is_empty(S))
+  {
+    printf("Error in pop: Stack is empty\n");
     exit(1);
   }
 
-  char line[100]; //for storing each line from file
-  
-  while(fgets(line, 100, filePointer)){
+  node_ptr first_cell = S->next;
+  S->next = first_cell->next;
+  first_cell->next = NULL;
+  return first_cell;
+}
+
+/*prints final list by determining matched and unmatched brackets*/
+void printList(node_ptr head)
+{
+  if (head == NULL)
+  {
+    printf("List is empty\n");
+    return;
+  }
+
+  node_ptr current = head;
+  while (current != NULL)
+  {
+    if (current->match == NULL)
+    {
+      printf("Unmatched brace on Line %d and Column %d\n", current->row, current->column);
+    }
+    else
+    {
+      printf("Found matching braces: (%d,%d) -> (%d,%d)\n",
+             current->match->row, current->match->column, current->row, current->column);
+    }
+    current = current->next;
+  }
+}
+
+int main(int argc, char *argv[])
+{
+  int row = 0;
+  int column = 0;
+  STACK stack = create_stack();
+  node_ptr head = NULL;
+
+  FILE *filePointer = fopen(argv[1], "r");
+  if (filePointer == NULL)
+  {
+    printf("Error: Unable to open file %s\n", argv[1]);
+    return 1;
+  }
+
+  char line[100]; // for storing each line from file
+  while (fgets(line, 100, filePointer) != NULL) 
+  {
     row++; 
     column = 0;
-    
-    //iterate through each character in line
-    for (int i = 0; i < strlen(line); i++){
+
+    for (int i = 0; i < strlen(line); i++)
+    {
       column++;
-      if (line[i] == '{' || line[i] == '}'){ 
-        
-        //create a bracket struct to store information about new bracket
-        struct bracket* newBracket  = malloc(sizeof(struct bracket));
-        if (newBracket == NULL){
-          printf("Malloc Error making bracket");
-          exit(1);
+      /*if open bracket appears push to top of stack*/
+      if (line[i] == '{')
+      {
+        push("{", row, column, stack);
+      }
+      /*if closed bracket appears first check if stack
+      is empty to determine whether it is an unmatched closed bracket
+      if not then insert it into a list with its matching open bracket
+      */
+      else if (line[i] == '}')
+      {
+        if (is_empty(stack))
+        {
+          insertList("}", row, column, NULL, &head);
         }
-
-        //assign row, column, and next values
-        newBracket->row = row; 
-        newBracket->column = column;
-        newBracket->next = NULL;
-        
-        //if open bracket, push onto stack
-        if (line[i] == '{'){
-          
-          //assign newBracket as open bracket type
-          strcpy(newBracket->type, "Open");
-          
-          //push onto stack
-          push(newBracket);
-        } 
-        
-        //if closed bracket, 
-        else if(line[i] == '}'){
-          //assign newBracket as closed bracket type
-          strcpy(newBracket->type, "Close"); 
-
-          //create a newMatch that will pair each open and closed bracket
-          struct matchingBrackets* newMatch = malloc(sizeof(struct matchingBrackets));
-          if (newMatch == NULL){
-            printf("Error: couldnt create new match\n");
-            exit(1);
-          }
-
-          /*if stack is empty then the new closed bracket doesn't have 
-          an open pair, thus open = NULL for newMatch. 
-          */
-          if(stack == NULL){
-            newMatch->open = NULL;
-            newMatch->close = newBracket;
-            insert(newMatch);
-          } 
-          
-          else {
-            struct bracket* openBracket = pop();
-            newMatch->open = openBracket;
-            newMatch->close = newBracket;
-            insert(newMatch);
-            }
-          }
+        else
+        {
+          node_ptr open_bracket = pop(stack);
+          insertList("}", row, column, open_bracket, &head);
         }
       }
     }
   }
-  //create free for both lists
-  printStack();
+
+  /*have to check if there are any unmatched open brackets in the 
+  stack. then just pop them from the stack and insert them into the list*/
+  while (!is_empty(stack))
+  {
+    node_ptr unmatched = pop(stack);
+    insertList("{", unmatched->row, unmatched->column, NULL, &head);
+  }
+
+  fclose(filePointer);
+  printList(head);
+
+  delete_list(head);
+  free(stack); 
+
   return 0;
 }
-
