@@ -56,14 +56,14 @@ void printNames(struct snack *head){
 //splits linked list into two halves, returning the pointer to the head of the second half
 //if list has an odd amount of items then the first half will have +1 item
 struct snack* split(struct snack* head){
-  printf("Split!\n");
+  //printf("Split!\n");
   //case if there is only 1 item that is asked to be split
   if (head->next == NULL){
     return NULL;
   }
     int len = lengthOf(head)/2;
     struct snack* current = head;
-    for (int i=0; i <= len; i++){
+    for (int i=0; i < len; i++){
         current = current->next;
     }
     struct snack* secondHalf = current->next; //creates pointer to second half
@@ -136,8 +136,6 @@ struct snack* merge(struct snack* firstHalf, struct snack* secondHalf){
 //recursive mergeSort function that utilizes the split() and merge() functions
 //returns a pointer to the begining of the sorted list 
 struct snack* mergeSort(struct snack* head){
-  printNames(head);
-  printf("MergeSort!\n");
   if (split(head) == NULL){
     printf("split(head) is null\n");
     return head;
@@ -160,15 +158,26 @@ int main() {
     head->next = NULL;
     
     insertFront("Chips", 1.50, 2, head);
-    insertFront("Raisins", 4.15, 10, head);
-    insertFront("Bananas", 0.50, 5, head);
+    insertFront("Raisins", 4.15, 5, head);
+    insertFront("Bananas", 0.50, 10, head);
     
     
     //printf("Size:%d snacks\n", lengthOf(head));
     //printList(head);
     //printf("Old: ");
     printNames(head);
-    struct snack* newList = mergeSort(head->next);
+    //struct snack* newList = mergeSort(head->next);
+    struct snack* secondHalf = split(head);
+    printNames(head);
+    printNames(secondHalf);
+    //printNames(secondHalf);
+    //printf("First half merge Sort: ");
+    //printNames(mergeSort(head));
+    //printf("Second Half merge sort: ");
+    //printNames(mergeSort(secondHalf));
+    printf("split on head");
+    printNames(split(head));
+
     //printf("New:");
     //printNames(newList);
     //printList(newList);
