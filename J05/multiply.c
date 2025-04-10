@@ -57,9 +57,9 @@ int main(int argc, char *argv[]) {
 
   printf("Result 1: [");
   for (int i = 0; i < SIZE; i++){
-    printf("%d ", result[i]);
+    printf("%d, ", result[i]);
   }
-  printf("\n");
+  printf("]\n");
 
   // TODO: Implement your thread solution here
   printf("Test with 4 threads\n");
