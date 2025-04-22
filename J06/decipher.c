@@ -2,7 +2,7 @@
 
 int main()
 {
-    FILE* fp = fopen("message", "r");
+    FILE* fp = fopen("message1", "rb");
     char c = fgetc(fp);
     while (c != EOF)
     {
